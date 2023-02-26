@@ -13,28 +13,39 @@ const showCard = ()=>{
     }
     
 }
-const showInforWeather = (LocalizedName,WeatherText,ConversionTemperature,timeIcon)=>{
-    
-timeIconContainer.innerHTML = timeIcon
-cityNameContainer.textContent= LocalizedName
-cityWeatherContainer.textContent= WeatherText
-cityTemperatureContainer.textContent = ConversionTemperature
-}
-cityForm.addEventListener('submit',async event=>{
-event.preventDefault()
-
-const inputValue = event.target.city.value
-
+const showInforWeather = async (inputValue)=>{
 const [{Key,LocalizedName}] = await getCityData(inputValue)
 const [{WeatherText,Temperature,IsDayTime,WeatherIcon}] = await getCityWeather(Key)
 const timeIcon = `<img src="./src/icons/${WeatherIcon}.svg">`
 const ConversionTemperature = Math. ceil(Temperature.Metric.Value)
 
-showCard()
 timeImg.src = IsDayTime ? './src/day.svg' : './src/night.svg'
 
+timeIconContainer.innerHTML = timeIcon
+cityNameContainer.textContent= LocalizedName
+cityWeatherContainer.textContent= WeatherText
+cityTemperatureContainer.textContent = ConversionTemperature
+}
+const localStorageShow =()=>{
+    const city = localStorage.getItem('city')
+    if(city){        
+    showCard()
+    showInforWeather(city)
+        }
+} 
+cityForm.addEventListener('submit',async event=>{
+event.preventDefault()
+
+const inputValue = event.target.city.value
 
 
-showInforWeather(LocalizedName,WeatherText,ConversionTemperature,timeIcon)
+
+
+showCard()
+showInforWeather(inputValue)
+localStorage.setItem('city',inputValue)
+
 cityForm.reset()
 })
+
+localStorageShow()
